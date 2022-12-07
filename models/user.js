@@ -11,6 +11,7 @@ const UserSchema = new Schema({
     password: String,
     role: [],
     groupID: {type: mongoose.Schema.Types.ObjectId, required: false, ref: "Group"},
+    token: { type: String },
   }, { timestamps: true });
   
 // UserSchema.virtual('groups', {

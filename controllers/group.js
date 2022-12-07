@@ -1,7 +1,8 @@
 const Group = require('../models/group');
+const User = require('../models/user');
 
 function getGroups(req, res) {
-    Group.find()
+    Group.find({}, 'name -_id')
         .then((groups) => {
             res.status(200).send(groups);
         })
@@ -16,6 +17,13 @@ function createGroup(req, res) {
             name: req.body.name,
         }
     );
+    for (let key in req.body) {
+        if (key !== "name") {
+            return res.status(404).json({
+                message: 'Ce nom de groupe est invalide',
+            });
+        }
+    }
     group.save()
         .then(result => {
             res.status(201).json({
@@ -31,14 +39,24 @@ function createGroup(req, res) {
 }
 
 function updateGroup(req, res) {
-    console.log(req.body.name);
+
+    for (let key in req.body) {
+        if (key !== "name") {
+            return res.status(404).json({
+                message: 'Ce nom de groupe est invalide',
+            });
+        }
+    }
 
     if(req.body.name && req.body.name !== " ") {
         
 
-    Group.findOneAndUpdate({ _id: req.params.id }, {name: req.body.name}, {upsert: true}, function(err, doc) {
+    Group.findOneAndUpdate({ _id: req.params.id }, {name: req.body.name}, {upsert: false}, function(err, doc) {
         if (err) return res.send(409, {message: 'Ce groupe existe déjà'});
-        return res.send('Succesfully saved.');
+        return res.json({
+            message: 'Le groupe a été mis à jour',
+        }
+        );
     });
     } else {
         res.status(404).json({
@@ -49,8 +67,14 @@ function updateGroup(req, res) {
 
 function deleteGroup(req, res) {
     Group.deleteOne({ _id: req.params.id })
-    .then(() => { 
-        res.status(204)
+    .then((result) => { 
+        if (result.deletedCount > 0) {
+        res.status(204);
+        } else {
+        res.status(404).json({
+            message: 'Ce groupe n\'existe pas',
+        });
+        }
     })
     .catch(err => {
         res.status(500).json({
@@ -59,10 +83,38 @@ function deleteGroup(req, res) {
     });
 }
 
+async function getUsersByGroup(req, res) {
+    let arrayDataGroup = [];
+    const allGroups = await Group.find()
+    .then((groups) => {
+       return groups;
+
+    })
+
+        for (let key in allGroups) {
+            const users = await User.find({groupID: allGroups[key]._id.valueOf()}, 'firstname lastname -_id')
+            .then((users) => users)
+            if(users.length !== 0) {
+            arrayDataGroup.push({
+                Group: allGroups[key].name,
+                Users: users
+            })
+        } else {
+            arrayDataGroup.push({
+                Group: allGroups[key].name,
+                Users: "Aucun utilisateur"
+            })
+        }
+        }
+        res.status(200).send(arrayDataGroup);
+
+}
+
 
 exports.getGroups = getGroups
 exports.createGroup = createGroup
 exports.updateGroup = updateGroup
 exports.deleteGroup = deleteGroup
+exports.getUsersByGroup = getUsersByGroup
 
 

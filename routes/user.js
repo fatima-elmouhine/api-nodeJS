@@ -1,16 +1,18 @@
 const express = require('express');
 const router = express.Router();
+const auth = require("../middlewares/auth");
 
 const UserControllers = require('../controllers/user');
 
 router.get('/', UserControllers.getUsers);
 router.post('/', UserControllers.createUser);
+router.patch('/:id/toGroup/:idGroup', auth , UserControllers.addUserToGroup);
 
-router.put('/:id', UserControllers.updateUser);
-router.delete('/:id', UserControllers.deleteUser);
+router.get('/:id', auth, UserControllers.getUseById);
+router.put('/:id', auth, UserControllers.updateUser);
+router.delete('/:id',auth, UserControllers.deleteUser);
 
 router.post('/login', UserControllers.loginUser);
 
-router.patch('/:id/toGroup/:idGroup', UserControllers.addUserToGroup);
 
 module.exports = router;
