@@ -77,7 +77,9 @@ async function loginUser(req, res) {
 
         }else{
 
-            res.status(400).send("Invalid Credentials");
+            res.status(400).json({
+                message: "Email ou mot de passe incorrect",
+                });
         }
       } catch (err) {
         console.log(err);
@@ -112,7 +114,6 @@ async function getUseById(req, res) {
         console.log(err);
     });
 
-    // res.send("get user by id")
 
 }
 
@@ -140,10 +141,38 @@ function addUserToGroup(req, res) {
 
 function updateUser(req, res) {
     const newData = req.body
+
+    for (const key in req.body) {
+        if( key == "password" ){
+            const salt = bcrypt.genSaltSync(saltRounds);
+            const hash = bcrypt.hashSync(req.body.password, salt);
+            newData.password = hash;
+        }
+        
+        if(req.user.role != "ROLE_ADMIN"){
+
+            if((key != "email" && key  !=  "lastname" && key  !=  "firstname" && key  !=  "password")){
+
+                return res.status(400).json({
+                    message: 'Vous ne pouvez pas modifier ce champ',
+                });
+                
+            }
+        }else{
+            if(key  !=  "email" && key  !=  "lastname" && key  !=  "firstname" && key  !=  "password" && key  !=  "role" && key  !=  "groupID"){
+                return res.status(400).json({
+                    message: 'Ce champ n\'existe pas',
+                });
+                
+            }
+        }
+    }
+    
     User.findOneAndUpdate({ _id: req.params.id }, newData,{ upsert:false },function(err, doc) {
         if (err) return res.send(500, {error: err});
         return res.status(201).json({
             message: 'Bien été modifié',
+            user: doc
         });
     });
 }
