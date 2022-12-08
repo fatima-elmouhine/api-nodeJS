@@ -172,7 +172,6 @@ function updateUser(req, res) {
         if (err) return res.send(500, {error: err});
         return res.status(201).json({
             message: 'Bien été modifié',
-            user: doc
         });
     });
 }
