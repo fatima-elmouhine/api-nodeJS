@@ -11,7 +11,7 @@ const auth = (req, res, next) => {
     const tokenAllStr = req.headers.cookie;
 
     try {
-        const token = tokenAllStr.split('=')[1];
+        const token = tokenAllStr.split('token=')[1] || req.cookies.token;
 
         if (!token) return res.status(403).send({"message": "Accès refusé."});
         const decoded = jwt.verify(token,jwtPrivateKey);
