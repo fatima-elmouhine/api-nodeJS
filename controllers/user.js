@@ -86,7 +86,8 @@ async function loginUser(req, res) {
       }
 }
 
-async function getUseById(req, res) {
+async function getUserById(req, res) {
+    if(req.params.id == req.user.user_id){
     User.findOne({ _id: req.params.id }, 'firstname lastname email groupID -_id')
     .then((user) => {
         if(user){
@@ -106,14 +107,16 @@ async function getUseById(req, res) {
                 res.status(200).send(userInfo);
             })
         }else{
+        console.log('toto1');
+
             res.status(404).send("Utilisateur non trouvé");
         }
     })
     .catch((err) => {
+        console.log('toto2');
         res.status(404).send("Utilisateur non trouvé");
         console.log(err);
-    });
-
+    });}
 
 }
 
@@ -198,11 +201,13 @@ function deleteUser(req, res) {
 }
 
 
+
+
 exports.getUsers = getUsers;
 exports.createUser = createUser;
 exports.loginUser = loginUser;
 exports.addUserToGroup = addUserToGroup;
 exports.updateUser = updateUser;
 exports.deleteUser = deleteUser;
-exports.getUseById = getUseById;
+exports.getUserById = getUserById;
 

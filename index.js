@@ -142,4 +142,9 @@ mongoose.connect(process.env.MONGODB_URL, {
     app.use('/api/groups', groupsRouter);
 
 
+    app.get('/api/logout', (req, res) => {
+        res.clearCookie('token');
+        // console.log('Logged out');
+        res.send('Vous êtes deconnecte');
+    });
 

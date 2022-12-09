@@ -409,6 +409,20 @@
         }
       }
     },
+    "/api/logout": {
+      "get": {
+        "summary": "Supprime le token d'authentification",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
     "/api/groups/users": {
       "get": {
         "summary": "Récupère la liste des utilisateurs des groupes",
