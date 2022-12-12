@@ -7,6 +7,6 @@
 - Lancer le projet avec **npm start**
 
 ## Documentation
-On peut acceder à la documentation des routes réaliser avec
+On peut acceder à la documentation des routes réalisées avec
 - swagger par le lien suivant : http://localhost:3000/doc/
 - postman par le lien suivant : https://documenter.getpostman.com/view/21014196/2s8YzS1iXx
